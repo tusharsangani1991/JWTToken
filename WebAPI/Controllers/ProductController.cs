@@ -2,29 +2,28 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebAPI.Cache;
-using WebAPI.Data;
-using WebAPI.Model;
+using WebAPI.Infrastructure;
+using WebAPI.Infrastructure.Tabels;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController, Authorize]
-    public class ProductController : ControllerBase
+    [ApiController]
+    public class ProductController : ApiControllerBase
     {
-        private readonly DbContextClass _context;
+        private readonly DbContextEx _context;
         //private readonly ICacheService _cacheService;
 
-        public ProductController(DbContextClass context)
+        public ProductController(DbContextEx context)
         {
             _context = context;
         }
 
         [HttpGet]
         [Route("ProductsList")]
-        public async Task<ActionResult<IEnumerable<Product>>> Get()
+        public async Task<ActionResult<IEnumerable<ProductTable>>> Get()
         {
-            var productCache = new List<Product>();
+            var productCache = new List<ProductTable>();
 
             //  productCache = _cacheService.GetData<List<Product>>("Product");
 
@@ -42,14 +41,14 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("ProductDetail")]
-        public async Task<ActionResult<Product>> Get(int id)
+        public async Task<ActionResult<ProductTable>> Get(int id)
         {
-            var productCache = new Product();
-            var productCacheList = new List<Product>();
+            var productCache = new ProductTable();
+            var productCacheList = new List<ProductTable>();
 
-          //  productCacheList = _cacheService.GetData<List<Product>>("Product");
+            //  productCacheList = _cacheService.GetData<List<Product>>("Product");
 
-            productCache = productCacheList.Find(x => x.ProductId == id);
+            productCache = productCacheList.Find(x => x.Id == id);
 
             if (productCache == null)
             {
@@ -62,20 +61,20 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("CreateProduct")]
-        public async Task<ActionResult<Product>> POST(Product product)
+        public async Task<ActionResult<ProductTable>> POST(ProductTable product)
         {
             _context.Products.Add(product);
 
             await _context.SaveChangesAsync();
 
-           // _cacheService.RemoveData("Product");
+            // _cacheService.RemoveData("Product");
 
-            return CreatedAtAction(nameof(Get), new { id = product.ProductId }, product);
+            return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
         }
 
         [HttpPost]
         [Route("DeleteProduct")]
-        public async Task<ActionResult<IEnumerable<Product>>> Delete(int id)
+        public async Task<ActionResult<IEnumerable<ProductTable>>> Delete(int id)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null)
@@ -84,7 +83,7 @@ namespace WebAPI.Controllers
             }
             _context.Products.Remove(product);
 
-           // _cacheService.RemoveData("Product");
+            // _cacheService.RemoveData("Product");
 
             await _context.SaveChangesAsync();
 
@@ -94,9 +93,9 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("UpdateProduct")]
-        public async Task<ActionResult<IEnumerable<Product>>> Update(int id, Product product)
+        public async Task<ActionResult<IEnumerable<ProductTable>>> Update(int id, ProductTable product)
         {
-            if (id != product.ProductId)
+            if (id != product.Id)
             {
                 return BadRequest();
             }
@@ -112,7 +111,7 @@ namespace WebAPI.Controllers
             productData.ProductName = product.ProductName;
             productData.ProductStock = product.ProductStock;
 
-           // _cacheService.RemoveData("Product");
+            // _cacheService.RemoveData("Product");
 
             await _context.SaveChangesAsync();
             return await _context.Products.ToListAsync();

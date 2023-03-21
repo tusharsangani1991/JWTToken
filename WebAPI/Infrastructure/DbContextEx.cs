@@ -25,6 +25,7 @@ namespace WebAPI.Infrastructure
         public DbSet<RoleTable> Roles { get; set; }
         public DbSet<PermissionTable> Permissions { get; set; }
         public DbSet<ApiTokenTable> ApiTokens { get; set; }
+        public DbSet<ProductTable> Products { get; set; }
 
     }
 }

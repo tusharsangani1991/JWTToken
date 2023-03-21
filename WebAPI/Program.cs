@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting.Internal;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using System.Text;
 using WebAPI;
 using WebAPI.Cache;
 using WebAPI.Infrastructure;
-using WebAPI.Service.User;
 using WebAPI.Utilities.Jwt;
-
+using ConfigurationManager = WebAPI.ConfigurationManager;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -98,24 +98,24 @@ builder.Services.AddControllers().AddNewtonsoftJson();
 
 builder.Services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 
-//builder.Services.AddAuthentication(opt =>
-//{
-//    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = ConfigurationManager.AppSetting["JWT:ValidIssuer"],
-//            ValidAudience = ConfigurationManager.AppSetting["JWT:ValidAudience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSetting["JWT:Secret"]))
-//        };
-//    });
+builder.Services.AddAuthentication(opt =>
+{
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = ConfigurationManager.AppSetting["JWT:ValidIssuer"],
+            ValidAudience = ConfigurationManager.AppSetting["JWT:ValidAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSetting["JWT:Secret"]))
+        };
+    });
 
 var app = builder.Build();
 

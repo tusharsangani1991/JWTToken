@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : ApiControllerBase
     {
 
         public AuthenticationController(DbContextEx context, IConfig config, IJwtAuthManager jwtAuthManager)
