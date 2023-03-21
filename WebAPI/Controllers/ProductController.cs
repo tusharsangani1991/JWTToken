@@ -8,7 +8,7 @@ using WebAPI.Infrastructure.Tabels;
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+   // [ApiController]
     public class ProductController : ApiControllerBase
     {
         private readonly DbContextEx _context;
