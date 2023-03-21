@@ -89,7 +89,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<ICacheService, CacheService>();
-builder.Services.AddSingleton<IUserService, UserService>();
+//builder.Services.AddSingleton<IUserService, UserService>();
 //builder.Services.AddDbContext<DbContextClass>();
 builder.Services.AddSingleton<IConfig, Config>();
 
