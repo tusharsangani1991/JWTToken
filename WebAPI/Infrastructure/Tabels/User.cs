@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebAPI.Tabels
+namespace WebAPI.Infrastructure.Tabels
 {
     public class User
     {

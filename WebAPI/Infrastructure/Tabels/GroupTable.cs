@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebAPI.Tabels
+namespace WebAPI.Infrastructure.Tabels
 {
     [Table("Group")]
     public class GroupTable
-    {        
+    {
         public Guid Id { get; set; }
         public string Name { get; set; }
 
@@ -18,14 +18,14 @@ namespace WebAPI.Tabels
         {
             public void Configure(EntityTypeBuilder<GroupTable> builder)
             {
-                builder.HasKey(v => new {  v.Id });
+                builder.HasKey(v => new { v.Id });
 
-                
+
                 builder.Property(v => v.Id).ValueGeneratedNever();
 
-                builder.HasMany(v => v.Roles).WithOne(v => v.Group).HasForeignKey(v => new {v.GroupId }).HasPrincipalKey(v => new {  v.Id });
-                
-                builder.HasIndex(v => new {v.Name }).HasDatabaseName("By GroupName");
+                builder.HasMany(v => v.Roles).WithOne(v => v.Group).HasForeignKey(v => new { v.GroupId }).HasPrincipalKey(v => new { v.Id });
+
+                builder.HasIndex(v => new { v.Name }).HasDatabaseName("By GroupName");
 
             }
         }
@@ -52,8 +52,8 @@ namespace WebAPI.Tabels
                 builder.Property(v => v.Id).HasDefaultValueSql("NEWID()");
 
                 builder.Property(v => v.GroupId).ValueGeneratedNever();
-                builder.Property(v => v.RoleId).ValueGeneratedNever();                
-                builder.HasIndex(v => new {  v.GroupId, v.RoleId }).HasDatabaseName("By GroupRole");
+                builder.Property(v => v.RoleId).ValueGeneratedNever();
+                builder.HasIndex(v => new { v.GroupId, v.RoleId }).HasDatabaseName("By GroupRole");
 
             }
         }
@@ -61,7 +61,7 @@ namespace WebAPI.Tabels
 
     [Table("Role")]
     public class RoleTable
-    {       
+    {
         public Guid Id { get; set; }
         public string Role { get; set; }
 

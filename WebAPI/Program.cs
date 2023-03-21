@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
+using WebAPI;
 using WebAPI.Cache;
-using WebAPI.Data;
+using WebAPI.Infrastructure;
+using WebAPI.Service.User;
 using WebAPI.Utilities.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +22,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 var jwtTokenConfig = Configuration.GetSection("JwtTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
+
+var conString = Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContextPool<DbContextEx>(options =>
+{
+    options.UseSqlServer(conString);
+    options.EnableSensitiveDataLogging();
+});
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -76,10 +88,15 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.Services.AddControllers().AddNewtonsoftJson();
 builder.Services.AddScoped<ICacheService, CacheService>();
+builder.Services.AddSingleton<IUserService, UserService>();
+//builder.Services.AddDbContext<DbContextClass>();
+builder.Services.AddSingleton<IConfig, Config>();
 
-builder.Services.AddDbContext<DbContextClass>();
+builder.Services.AddControllers().AddNewtonsoftJson();
+
+
+builder.Services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 
 //builder.Services.AddAuthentication(opt =>
 //{

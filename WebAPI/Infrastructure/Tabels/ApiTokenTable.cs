@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebAPI.Tabels
+namespace WebAPI.Infrastructure.Tabels
 {
     public class ApiTokenTable
     {
@@ -22,7 +22,6 @@ namespace WebAPI.Tabels
                 builder.Property(v => v.Id).ValueGeneratedNever();
                 builder.Property(v => v.UserGuid).ValueGeneratedNever();
                 builder.HasIndex(v => v.UserGuid).HasDatabaseName("Member");
-
                 builder.Property(v => v.GroupId).ValueGeneratedNever();
             }
         }
