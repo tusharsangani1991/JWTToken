@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,22 @@ var Configuration = new ConfigurationBuilder()
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = ApiAuthDefaults.Scheme;
-});
 
 var jwtTokenConfig = Configuration.GetSection("JwtTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
+
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+//        options => builder.Configuration.Bind("JwtSettings", options))
+//    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+//        options => builder.Configuration.Bind("CookieSettings", options));
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = ApiAuthDefaults.Scheme;
+    options.AddScheme<ApiAuthHandler>(ApiAuthDefaults.Scheme, ApiAuthDefaults.Scheme);
+    
+});
 
 var conString = Configuration.GetConnectionString("DefaultConnection");
 
