@@ -20,6 +20,11 @@ var Configuration = new ConfigurationBuilder()
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = ApiAuthDefaults.Scheme;
+});
+
 var jwtTokenConfig = Configuration.GetSection("JwtTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
 
@@ -35,12 +40,12 @@ builder.Services.AddSwaggerGen(options =>
 {
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
+        Name = "JWT Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Description = "Bearer Authentication with JWT Token",
-        Type = SecuritySchemeType.Http,
         Reference = new OpenApiReference
         {
             Id = JwtBearerDefaults.AuthenticationScheme,
@@ -68,6 +73,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
+
 builder.Services.ConfigureSwaggerGen(options =>
 {
     options.CustomSchemaIds(type => type.ToString());
@@ -87,16 +93,16 @@ builder.Services.AddCors(options =>
                                             .AllowAnyMethod()
     );
 });
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 
 builder.Services.AddScoped<ICacheService, CacheService>();
 //builder.Services.AddSingleton<IUserService, UserService>();
 //builder.Services.AddDbContext<DbContextClass>();
 builder.Services.AddSingleton<IConfig, Config>();
 
-builder.Services.AddControllers().AddNewtonsoftJson();
 
 
-builder.Services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
 
 //builder.Services.AddAuthentication(opt =>
 //{
