@@ -6,8 +6,7 @@ namespace WebAPI.Infrastructure.Tabels
     public class ApiTokenTable
     {
         public Guid Id { get; set; }
-        public Guid UserGuid { get; set; }
-        public Guid GroupId { get; set; }
+        public Guid UserGuid { get; set; }     
 
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
@@ -21,8 +20,7 @@ namespace WebAPI.Infrastructure.Tabels
                 builder.HasKey(v => v.Id);
                 builder.Property(v => v.Id).ValueGeneratedNever();
                 builder.Property(v => v.UserGuid).ValueGeneratedNever();
-                builder.HasIndex(v => v.UserGuid).HasDatabaseName("Member");
-                builder.Property(v => v.GroupId).ValueGeneratedNever();
+                builder.HasIndex(v => v.UserGuid).HasDatabaseName("Member");                
             }
         }
     }

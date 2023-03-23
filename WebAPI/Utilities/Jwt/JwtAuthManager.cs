@@ -13,7 +13,7 @@ namespace WebAPI.Utilities.Jwt
         //(ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token);
         (JwtSecurityToken, bool) IsTokenValid(string accessToken);
     }
-    public class JwtAuthManager: IJwtAuthManager
+    public class JwtAuthManager : IJwtAuthManager
     {
         private readonly JwtTokenConfig _jwtTokenConfig;
         private readonly byte[] _secret;
@@ -37,16 +37,6 @@ namespace WebAPI.Utilities.Jwt
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(_secret), SecurityAlgorithms.HmacSha256Signature));
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
-            //var tokenHandler = new JwtSecurityTokenHandler();
-            //var tokenDescriptor = new SecurityTokenDescriptor
-            //{
-            //    Subject = new ClaimsIdentity(claims),
-            //    Expires = DateTime.Now.AddMinutes(_jwtTokenConfig.AccessTokenExpiration),
-            //    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_secret), SecurityAlgorithms.HmacSha256Signature)
-            //};
-
-            //var token = tokenHandler.CreateToken(tokenDescriptor);
-            //var accessToken = tokenHandler.WriteToken(token);
 
             var refreshToken = new RefreshToken
             {

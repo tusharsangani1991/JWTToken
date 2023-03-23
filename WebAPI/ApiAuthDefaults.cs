@@ -49,7 +49,7 @@ namespace WebAPI
                 if (token == null) return AuthenticateResult.Fail($"Invalid token; Parse failed for {rawJwtToken}");
 
                 var principal = ResolveTokenPrincipal(token);
-                if (principal == null) return AuthenticateResult.Fail($"Invalid token; Unable to resolve principal with account {token.GroupId} on token {token.TokenId}");
+                if (principal == null) return AuthenticateResult.Fail($"Invalid token; Unable to resolve principal on token {token.TokenId}");
 
                 return AuthenticateResult.Success(new AuthenticationTicket(principal, ApiAuthDefaults.Scheme));
             }

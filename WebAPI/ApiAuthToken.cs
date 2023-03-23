@@ -6,14 +6,14 @@ namespace WebAPI
 {
     public class ApiAuthToken
     {
-        public ApiAuthToken(Guid tokenId, Guid groupId)
+        public ApiAuthToken(Guid tokenId)
         {
             TokenId = tokenId;
-            GroupId = groupId;
+            
         }
 
         public Guid TokenId { get; }
-        public Guid GroupId { get; }
+        //public Guid GroupId { get; }
 
         static CryptoRandom m_rng = new CryptoRandom();
 
@@ -28,7 +28,7 @@ namespace WebAPI
             var grpId = val[1].ToShortGuid();
             var usrId = val[2].ToGuid();
             if (id == null || grpId == null || usrId == null) return (null, null);
-            return (new ApiAuthToken(id.Value,  grpId.Value), new Token(id.Value, usrId.Value, grpId.Value));
+            return (new ApiAuthToken(id.Value), new Token(id.Value, usrId.Value, grpId.Value));
         }
 
         public static ApiAuthToken Parse(byte[] masterKey, string rawToken)
@@ -42,14 +42,14 @@ namespace WebAPI
             var tokenId = new Guid(new ArraySegment<byte>(decrypted, 0, 16));
             var grpId = new Guid(new ArraySegment<byte>(decrypted, 16, 16));
 
-            return new ApiAuthToken(tokenId,  grpId);
+            return new ApiAuthToken(tokenId);
         }
 
         public string ToString(byte[] masterKey)
         {
             var bytes = new byte[32];
             Buffer.BlockCopy(TokenId.ToByteArray(), 0, bytes, 0, 16);
-            Buffer.BlockCopy(GroupId.ToByteArray(), 0, bytes, 16, 16);
+           // Buffer.BlockCopy(GroupId.ToByteArray(), 0, bytes, 16, 16);
 
             var salt = m_rng.NextBytes(SaltLength);
 
@@ -65,7 +65,7 @@ namespace WebAPI
 
         public Claim ToClaim(Guid memberId)
         {
-            return new Claim(ClaimTypes.NameIdentifier, TokenId + "~" + GroupId + "~" + memberId);
+            return new Claim(ClaimTypes.NameIdentifier, TokenId + "~" + "~" + memberId);
         }
     }
 }

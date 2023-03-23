@@ -17,8 +17,7 @@ namespace WebAPI.Controllers
         {
 
         }
-        protected IToken Token;
-        protected Guid GroupId;
+        protected IToken Token;        
         protected Guid UserId;
 
         void IActionFilter.OnActionExecuting(ActionExecutingContext context)
@@ -32,7 +31,7 @@ namespace WebAPI.Controllers
             if (apiToken != null && token != null)
             {
                 Token = token;
-                GroupId = apiToken.GroupId;
+               // GroupId = apiToken.GroupId;
             }
         }
 

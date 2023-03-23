@@ -11,21 +11,16 @@ namespace WebAPI.Infrastructure
 
         public DbContextEx(DbContextOptions<DbContextEx> options) : base(options)
         {
-            
+
         }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder options)
-        //{
-        //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
-        //}
-
-        public DbSet<User> Users { get; set; }
-        public DbSet<GroupTable> Groups { get; set; }
-        public DbSet<GroupRoleTable> GroupRoles { get; set; }
+        public DbSet<UserTable> Users { get; set; }
+        public DbSet<UserRoleTable> UserRoles { get; set; }
         public DbSet<RoleTable> Roles { get; set; }
         public DbSet<PermissionTable> Permissions { get; set; }
         public DbSet<ApiTokenTable> ApiTokens { get; set; }
         public DbSet<ProductTable> Products { get; set; }
 
+       
     }
 }

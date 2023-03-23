@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebAPI.Infrastructure;
 
@@ -12,10 +11,9 @@ using WebAPI.Infrastructure;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(DbContextEx))]
-    [Migration("20230321035953_InitialChanges")]
-    partial class InitialChanges
+    partial class DbContextExModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,7 +22,7 @@ namespace WebAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("WebAPI.Tabels.ApiTokenTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.ApiTokenTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,9 +30,6 @@ namespace WebAPI.Migrations
 
                     b.Property<string>("AccessToken")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("RefreshExpiryTime")
                         .HasColumnType("datetime2");
@@ -50,43 +45,7 @@ namespace WebAPI.Migrations
                     b.ToTable("ApiTokens");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.GroupRoleTable", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Inherited")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("GroupRole");
-                });
-
-            modelBuilder.Entity("WebAPI.Tabels.GroupTable", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Group");
-                });
-
-            modelBuilder.Entity("WebAPI.Tabels.PermissionTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.PermissionTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -117,7 +76,32 @@ namespace WebAPI.Migrations
                     b.ToTable("Permission");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.RoleTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.ProductTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ProductCost")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductStock")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.RoleTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,7 +115,28 @@ namespace WebAPI.Migrations
                     b.ToTable("Role");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.User", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.UserRoleTable", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserRole");
+                });
+
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.UserTable", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -142,9 +147,6 @@ namespace WebAPI.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
@@ -160,20 +162,9 @@ namespace WebAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.GroupRoleTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.PermissionTable", b =>
                 {
-                    b.HasOne("WebAPI.Tabels.GroupTable", "Group")
-                        .WithMany("Roles")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-                });
-
-            modelBuilder.Entity("WebAPI.Tabels.PermissionTable", b =>
-                {
-                    b.HasOne("WebAPI.Tabels.RoleTable", "Role")
+                    b.HasOne("WebAPI.Infrastructure.Tabels.RoleTable", "Role")
                         .WithMany("Permissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -182,14 +173,35 @@ namespace WebAPI.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.GroupTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.UserRoleTable", b =>
                 {
-                    b.Navigation("Roles");
+                    b.HasOne("WebAPI.Infrastructure.Tabels.RoleTable", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebAPI.Infrastructure.Tabels.UserTable", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WebAPI.Tabels.RoleTable", b =>
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.RoleTable", b =>
                 {
                     b.Navigation("Permissions");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("WebAPI.Infrastructure.Tabels.UserTable", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

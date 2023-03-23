@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
                 var loginResult = await _context.Users.FirstOrDefaultAsync(v => v.Email == user.Email && v.Password == user.Password);
                 if (loginResult != null)
                 {
-                    var token = await GenerateAuthToken(loginResult.Id, loginResult.GroupId);
+                    var token = await GenerateAuthToken(loginResult.Id);
 
                     return Ok(new JwtAuthResult { AccessToken = token.Data.AccessToken, RefreshToken = (new RefreshToken { TokenString = token.Data.RefreshToken, ExpireAt = token.Data.RefreshExpiryTime }) });
                 }
@@ -66,12 +66,12 @@ namespace WebAPI.Controllers
             return Unauthorized();
         }
 
-        internal Task<Result<ApiJwtAuthResult>> GenerateAuthToken(Guid memberid, Guid groupId)
+        internal Task<Result<ApiJwtAuthResult>> GenerateAuthToken(Guid memberid)
         {
             var result = new ApiJwtAuthResult();
 
             var tokenId = Guid.NewGuid();
-            var token = new ApiAuthToken(tokenId, groupId);
+            var token = new ApiAuthToken(tokenId);
             var encryptedToken = token.ToString(m_config.ApiAuthEncryptionKey);
 
             result.EncryptedToken = encryptedToken;
@@ -83,13 +83,10 @@ namespace WebAPI.Controllers
             apiToken.RefreshToken = result.RefreshToken = jwtToken.RefreshToken?.TokenString;
             apiToken.RefreshExpiryTime = result.RefreshExpiryTime = jwtToken.RefreshToken.ExpireAt;
             apiToken.UserGuid = memberid;
-            apiToken.GroupId = groupId;
+          //  apiToken.GroupId = groupId;
             _context.ApiTokens.Add(apiToken);
             _context.SaveChangesAsync();
-
-            //tokenId = m_broker.Request(new GetOrCreateToken(appKey, tokenId, memberid, groupId, result.EncryptedToken, result.AccessToken, result.RefreshToken, result.RefreshExpiryTime)).Id;
-            //  m_logger.Log(LogLevel.Debug, $"New token generated for member {memberid}, account {accountId}, token id {tokenId}");
-
+           
             return Task.FromResult<Result<ApiJwtAuthResult>>(result);
         }
                  
