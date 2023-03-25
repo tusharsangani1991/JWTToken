@@ -54,10 +54,24 @@ namespace WebAPI.Controllers
             }
             else
             {
-                var loginResult = await _context.Users.FirstOrDefaultAsync(v => v.Email == user.Email && v.Password == user.Password);
+                var loginResult = (from u in _context.Users
+                                   join ur in _context.UserRoles
+                                   on u.Id equals ur.UserId
+                                   join role in _context.Roles
+                                   on ur.RoleId equals role.Id
+                                   where u.Email == user.Email && u.Password == user.Password
+                                   select new
+                                   {
+                                       user = u,
+                                       roles = role
+                                   }).FirstOrDefault();
+                //  _context.Entry(loginResult.roles).Collection(v => v.UserRoles).Load();
+                //var loginResult = await _context.Users.FirstOrDefaultAsync(v => v.Email == user.Email && v.Password == user.Password);
                 if (loginResult != null)
                 {
-                    var token = await GenerateAuthToken(loginResult.Id);
+                    var roles = new List<string>();
+                    roles.Add(loginResult.roles.Role);
+                    var token = await GenerateAuthToken(loginResult.user.Id, roles);
 
                     return Ok(new JwtAuthResult { AccessToken = token.Data.AccessToken, RefreshToken = (new RefreshToken { TokenString = token.Data.RefreshToken, ExpireAt = token.Data.RefreshExpiryTime }) });
                 }
@@ -66,7 +80,7 @@ namespace WebAPI.Controllers
             return Unauthorized();
         }
 
-        internal Task<Result<ApiJwtAuthResult>> GenerateAuthToken(Guid memberid)
+        internal Task<Result<ApiJwtAuthResult>> GenerateAuthToken(Guid memberid, List<string> role)
         {
             var result = new ApiJwtAuthResult();
 
@@ -77,18 +91,18 @@ namespace WebAPI.Controllers
             result.EncryptedToken = encryptedToken;
             ApiTokenTable apiToken = new ApiTokenTable();
 
-            var jwtToken = _jwtAuthManager.GenerateJwtToken(tokenId.ToString(), encryptedToken);
+            var jwtToken = _jwtAuthManager.GenerateJwtToken(tokenId.ToString(), encryptedToken,role);
             apiToken.Id = tokenId;
             apiToken.AccessToken = result.AccessToken = jwtToken.AccessToken;
             apiToken.RefreshToken = result.RefreshToken = jwtToken.RefreshToken?.TokenString;
             apiToken.RefreshExpiryTime = result.RefreshExpiryTime = jwtToken.RefreshToken.ExpireAt;
             apiToken.UserGuid = memberid;
-          //  apiToken.GroupId = groupId;
+            //  apiToken.GroupId = groupId;
             _context.ApiTokens.Add(apiToken);
             _context.SaveChangesAsync();
-           
+
             return Task.FromResult<Result<ApiJwtAuthResult>>(result);
         }
-                 
+
     }
 }

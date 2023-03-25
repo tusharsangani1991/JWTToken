@@ -9,7 +9,7 @@ namespace WebAPI.Utilities.Jwt
 {
     public interface IJwtAuthManager
     {
-        JwtAuthResult GenerateJwtToken(string authId, string authPayload);
+        JwtAuthResult GenerateJwtToken(string authId, string authPayload, List<string> role);
         //(ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token);
         (JwtSecurityToken, bool) IsTokenValid(string accessToken);
     }
@@ -24,11 +24,14 @@ namespace WebAPI.Utilities.Jwt
             _secret = Encoding.ASCII.GetBytes(jwtTokenConfig.Secret);
         }
 
-        public JwtAuthResult GenerateJwtToken(string authId, string authPayload)
+        public JwtAuthResult GenerateJwtToken(string authId, string authPayload, List<string> roles)
         {
             var claims = new List<Claim>() { new Claim(ClaimTypes.PrimarySid, authId), new Claim(ClaimTypes.Hash, authPayload) };
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            //new Claim(ClaimTypes.Role, role.Join(",")
 
-            var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
+        var shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
             var jwtToken = new JwtSecurityToken(
                 _jwtTokenConfig.Issuer,
                 shouldAddAudienceClaim ? _jwtTokenConfig.Audience : string.Empty,
