@@ -58,7 +58,7 @@ namespace WebAPI
         }
         private ClaimsPrincipal ResolveTokenPrincipal(ApiAuthToken token)
         {
-            var dbToken = _context.ApiTokens.FirstOrDefault(v => v.Id == token.TokenId); //m_broker.Request(new GetTokenById(token.TokenId, token.AccountId.Value));
+            var dbToken = _context.ApiTokens.FirstOrDefault(v => v.Id == token.TokenId); 
             if (dbToken == null) return null;
 
             var claims = new Claim[] { token.ToClaim(dbToken.UserGuid) };

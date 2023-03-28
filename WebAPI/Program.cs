@@ -25,12 +25,6 @@ builder.Services.AddEndpointsApiExplorer();
 var jwtTokenConfig = Configuration.GetSection("JwtTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
 
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
-//        options => builder.Configuration.Bind("JwtSettings", options))
-//    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
-//        options => builder.Configuration.Bind("CookieSettings", options));
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = ApiAuthDefaults.Scheme;
@@ -111,27 +105,6 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 //builder.Services.AddDbContext<DbContextClass>();
 builder.Services.AddSingleton<IConfig, Config>();
 
-
-
-
-//builder.Services.AddAuthentication(opt =>
-//{
-//    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//    .AddJwtBearer(options =>
-//    {
-//        options.TokenValidationParameters = new TokenValidationParameters
-//        {
-//            ValidateIssuer = true,
-//            ValidateAudience = true,
-//            ValidateLifetime = true,
-//            ValidateIssuerSigningKey = true,
-//            ValidIssuer = ConfigurationManager.AppSetting["JWT:issuer"],
-//            ValidAudience = ConfigurationManager.AppSetting["JWT:audience"],
-//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSetting["JWT:Secret"]))
-//        };
-//    });
 
 var app = builder.Build();
 

@@ -8,7 +8,7 @@ using WebAPI.Infrastructure.Tabels;
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
-   // [ApiController]
+    [Authorize]
     public class ProductController : ApiControllerBase
     {
         private readonly DbContextEx _context;
@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet,Authorize(Roles ="User")]
         [Route("ProductsList")]
         public async Task<ActionResult<IEnumerable<ProductTable>>> Get()
         {

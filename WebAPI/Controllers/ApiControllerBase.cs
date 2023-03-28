@@ -8,7 +8,7 @@ namespace WebAPI.Controllers
 {
 
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [TypeFilter(typeof(ApiExceptionFilterAttribute))]
     public class ApiControllerBase : ControllerBase, IActionFilter
     {
